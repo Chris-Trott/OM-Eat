@@ -2,20 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/public";
 import { AirsideBadge } from "@/app/finds/airside-badge";
+import { ConfirmControl } from "@/app/finds/confirm-control";
 
 export const revalidate = 60;
-
-function freshnessLine(confirmCount: number, lastConfirmedAt: string | null) {
-  if (confirmCount < 1 || !lastConfirmedAt) {
-    return "Awaiting first confirmation.";
-  }
-  const date = new Date(lastConfirmedAt).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  return `Confirmed by ${confirmCount} crew, last on ${date}.`;
-}
 
 export default async function FindPage({
   params,
@@ -80,9 +69,11 @@ export default async function FindPage({
         <AirsideBadge airside={find.airside} />
       </div>
 
-      <p className="mt-3 text-sm font-semibold">
-        {freshnessLine(find.confirm_count, find.last_confirmed_at)}
-      </p>
+      <ConfirmControl
+        findId={find.id}
+        initialCount={find.confirm_count}
+        initialLastConfirmedAt={find.last_confirmed_at}
+      />
 
       <dl className="mt-6 divide-y divide-neutral-300 border-y border-neutral-300">
         {facts
