@@ -2,15 +2,18 @@ import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { rateLimit } from "@/lib/rate-limit";
 
-// Public submission intake. Open but moderated: everything lands in the
-// submissions queue as 'pending' and never appears on the site until a
-// curator publishes it. Written with the service role key — the anon key
-// has no insert policy anywhere.
+// Public submission intake for new Finds and corrections. Open but
+// moderated: everything lands in the submissions queue as 'pending' and
+// never appears on the site until a curator publishes it. Written with the
+// service role key — the anon key has no insert policy anywhere.
 
 const PAYMENT_OPTIONS = ["cash", "card", "both"] as const;
 
 const logged = () =>
   NextResponse.json({ message: "Submission logged. A curator will review." });
+
+const invalid = (error: string) =>
+  NextResponse.json({ error }, { status: 400 });
 
 function text(value: unknown, maxLength: number): string | null {
   if (typeof value !== "string") return null;
@@ -23,7 +26,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return invalid("Invalid request.");
   }
 
   // Honeypot: humans never see or fill this field. Report success and
@@ -41,43 +44,24 @@ export async function POST(request: Request) {
     );
   }
 
-  // Required fields.
-  const destinationId = text(body.destination_id, 36);
+  const type = body.type === "update" ? "update" : "new_find";
+  const supabase = createServiceClient();
+
+  // Find fields, shared by both types. For a new Find some are required;
+  // for an update everything is an optional correction.
   const dish = text(body.dish, 200);
   const place = text(body.place, 200);
   const airside =
     body.airside === true ? true : body.airside === false ? false : null;
 
-  if (!destinationId || !dish || !place || airside === null) {
-    return NextResponse.json(
-      { error: "Destination, dish, place, and airside/landside are required." },
-      { status: 400 },
-    );
-  }
-
-  const supabase = createServiceClient();
-
-  const { data: destination } = await supabase
-    .from("destinations")
-    .select("id")
-    .eq("id", destinationId)
-    .maybeSingle();
-  if (!destination) {
-    return NextResponse.json({ error: "Unknown destination." }, { status: 400 });
-  }
-
-  // Optional fields.
   const costAmount = text(body.cost_amount, 12);
   if (costAmount !== null && !/^\d+([.,]\d{1,2})?$/.test(costAmount)) {
-    return NextResponse.json({ error: "Cost must be a number." }, { status: 400 });
+    return invalid("Cost must be a number.");
   }
 
   const costCurrency = text(body.cost_currency, 3)?.toUpperCase() ?? null;
   if (costCurrency !== null && !/^[A-Z]{3}$/.test(costCurrency)) {
-    return NextResponse.json(
-      { error: "Currency must be a three-letter code." },
-      { status: 400 },
-    );
+    return invalid("Currency must be a three-letter code.");
   }
 
   const payment = text(body.payment, 10);
@@ -85,19 +69,15 @@ export async function POST(request: Request) {
     payment !== null &&
     !PAYMENT_OPTIONS.includes(payment as (typeof PAYMENT_OPTIONS)[number])
   ) {
-    return NextResponse.json({ error: "Invalid payment method." }, { status: 400 });
+    return invalid("Invalid payment method.");
   }
 
-  const mapsUrl = airside ? null : text(body.maps_url, 500);
+  const mapsUrl = airside === true ? null : text(body.maps_url, 500);
   if (mapsUrl !== null && !/^https?:\/\//.test(mapsUrl)) {
-    return NextResponse.json(
-      { error: "Map link must be a full web address." },
-      { status: 400 },
-    );
+    return invalid("Map link must be a full web address.");
   }
 
-  const payload = {
-    destination_id: destination.id,
+  const fields = {
     dish,
     place,
     airside,
@@ -111,8 +91,53 @@ export async function POST(request: Request) {
     maps_url: mapsUrl,
   };
 
+  let payload: Record<string, unknown>;
+  let findId: string | null = null;
+
+  if (type === "new_find") {
+    if (!dish || !place || airside === null) {
+      return invalid(
+        "Destination, dish, place, and airside/landside are required.",
+      );
+    }
+
+    // Resolve the destination server-side; use the id the database
+    // returned, never the client string.
+    const { data: destination } = await supabase
+      .from("destinations")
+      .select("id")
+      .eq("id", text(body.destination_id, 36) ?? "")
+      .maybeSingle();
+    if (!destination) {
+      return invalid("Unknown destination.");
+    }
+
+    payload = { destination_id: destination.id, ...fields };
+  } else {
+    const correction = text(body.body, 2000);
+    if (!correction) {
+      return invalid("Say what has changed.");
+    }
+
+    // Resolve the Find server-side; use the id the database returned,
+    // never the client string. Must exist and be published.
+    const { data: find } = await supabase
+      .from("finds")
+      .select("id")
+      .eq("id", text(body.find_id, 36) ?? "")
+      .eq("status", "published")
+      .maybeSingle();
+    if (!find) {
+      return invalid("Unknown Find.");
+    }
+
+    findId = find.id;
+    payload = { body: correction, ...fields };
+  }
+
   const { error } = await supabase.from("submissions").insert({
-    type: "new_find",
+    type,
+    find_id: findId,
     payload,
     submitter_display: text(body.submitter_display, 40),
     status: "pending",
