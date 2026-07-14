@@ -36,22 +36,22 @@ export default async function DestinationsPage() {
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
       <h1 className="text-2xl font-bold">Destinations</h1>
-      <p className="mt-2 text-sm">
+      <p className="mt-2 text-sm text-secondary">
         Network coverage as operated from London Gatwick. Select a
         destination for its entries.
       </p>
 
       {[...byCountry.entries()].map(([country, group]) => (
         <section key={country} className="mt-8">
-          <h2 className="border-b-2 border-black pb-1 text-sm font-bold uppercase tracking-wide">
+          <h2 className="border-b-2 border-ink pb-1 text-sm font-bold uppercase tracking-widest">
             <span aria-hidden="true">{countryFlag(country)}</span> {country}
           </h2>
           <ul>
             {group.map((d) => (
-              <li key={d.id} className="border-b border-neutral-300">
+              <li key={d.id} className="border-b border-line">
                 <Link
                   href={`/destinations/${d.slug}`}
-                  className="flex items-baseline gap-3 py-3"
+                  className="flex items-baseline gap-3 py-3 text-ink no-underline"
                 >
                   <span className="w-12 shrink-0 font-mono text-sm font-bold">
                     {d.iata}

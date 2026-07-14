@@ -30,7 +30,7 @@ export default async function AdminFindEditPage({
         {destination ? `${destination.iata} ${destination.city}` : ""}
       </p>
       <h1 className="text-2xl font-bold">{find.dish}</h1>
-      <p className="text-sm text-neutral-600">{find.place}</p>
+      <p className="text-sm text-secondary">{find.place}</p>
 
       <FindEditor find={find} />
     </main>

@@ -13,7 +13,7 @@ type Destination = {
 };
 
 const inputClass =
-  "mt-1 w-full rounded border border-neutral-400 bg-white px-3 py-2 text-base";
+  "mt-1 w-full rounded border border-line bg-surface px-3 py-2 text-base";
 const labelClass = "block text-sm font-semibold";
 
 export function SubmissionForm({
@@ -31,17 +31,17 @@ export function SubmissionForm({
 
   if (logged) {
     return (
-      <section className="mt-8 rounded border border-neutral-400 p-6">
+      <section className="mt-8 rounded border border-line bg-surface p-6">
         <h2 className="text-lg font-bold">Submission logged.</h2>
-        <p className="mt-2 text-sm">
+        <p className="mt-2 text-sm text-secondary">
           A curator will review this entry. If approved, it will appear on the
           destination page. No further action is required.
         </p>
         <div className="mt-4 flex gap-4 text-sm font-semibold">
-          <Link href="/" className="underline">
+          <Link href="/" className="text-accent no-underline">
             Return to home
           </Link>
-          <Link href="/destinations" className="underline">
+          <Link href="/destinations" className="text-accent no-underline">
             Destinations
           </Link>
         </div>
@@ -139,7 +139,7 @@ export function SubmissionForm({
         <legend className={labelClass}>
           Airside or landside? <span aria-hidden="true">*</span>
         </legend>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-secondary">
           Airside: past security. Landside: leaving the terminal required.
         </p>
         <div className="mt-2 grid grid-cols-2 gap-3">
@@ -147,10 +147,10 @@ export function SubmissionForm({
             type="button"
             onClick={() => setAirside(true)}
             aria-pressed={airside === true}
-            className={`rounded border-2 px-4 py-3 text-base font-bold ${
+            className={`rounded border-2 px-4 py-3 font-sans text-base font-bold tracking-widest ${
               airside === true
-                ? "border-black bg-black text-white"
-                : "border-neutral-400 bg-white"
+                ? "border-ink bg-ink text-page"
+                : "border-line bg-surface text-ink"
             }`}
           >
             AIRSIDE
@@ -159,10 +159,10 @@ export function SubmissionForm({
             type="button"
             onClick={() => setAirside(false)}
             aria-pressed={airside === false}
-            className={`rounded border-2 px-4 py-3 text-base font-bold ${
+            className={`rounded border-2 px-4 py-3 font-sans text-base font-bold tracking-widest ${
               airside === false
-                ? "border-black bg-black text-white"
-                : "border-neutral-400 bg-white"
+                ? "border-ink bg-ink text-page"
+                : "border-line bg-surface text-ink"
             }`}
           >
             LANDSIDE
@@ -174,7 +174,7 @@ export function SubmissionForm({
         <label className={labelClass} htmlFor="dish">
           Dish <span aria-hidden="true">*</span>
         </label>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-secondary">
           The specific thing to eat, not the venue.
         </p>
         <input id="dish" name="dish" required maxLength={200} className={inputClass} />
@@ -184,7 +184,7 @@ export function SubmissionForm({
         <label className={labelClass} htmlFor="place">
           Place <span aria-hidden="true">*</span>
         </label>
-        <p className="mt-1 text-xs text-neutral-600">Where it is sold.</p>
+        <p className="mt-1 text-xs text-secondary">Where it is sold.</p>
         <input id="place" name="place" required maxLength={200} className={inputClass} />
       </div>
 
@@ -199,7 +199,7 @@ export function SubmissionForm({
         <label className={labelClass} htmlFor="walking_time">
           Walking time
         </label>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-secondary">
           From the gate or terminal exit, e.g. “8 minutes”.
         </p>
         <input id="walking_time" name="walking_time" maxLength={100} className={inputClass} />
@@ -262,7 +262,7 @@ export function SubmissionForm({
         <label className={labelClass} htmlFor="directions">
           Directions
         </label>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-secondary">
           How to find it on foot. Assume the reader has 90 minutes and no data
           roaming.
         </p>
@@ -276,7 +276,7 @@ export function SubmissionForm({
           <label className={labelClass} htmlFor="maps_url">
             Map link
           </label>
-          <p className="mt-1 text-xs text-neutral-600">
+          <p className="mt-1 text-xs text-secondary">
             Optional. Paste a link from your maps app. Landside Finds only.
           </p>
           <input
@@ -294,7 +294,7 @@ export function SubmissionForm({
         <label className={labelClass} htmlFor="submitter_display">
           Your name
         </label>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-secondary">
           Optional. First name and last initial only, e.g. “Chris T”. Displayed
           against the Find if published.
         </p>
@@ -310,7 +310,7 @@ export function SubmissionForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded bg-black px-4 py-3 text-base font-bold text-white disabled:opacity-50"
+        className="w-full rounded border-2 border-ink bg-ink px-4 py-3 font-sans text-lg font-bold text-page disabled:opacity-50"
       >
         {submitting ? "Logging…" : "Submit for review"}
       </button>

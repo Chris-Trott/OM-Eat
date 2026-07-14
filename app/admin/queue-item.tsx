@@ -69,7 +69,7 @@ export function QueueItem({
   });
 
   return (
-    <li className="rounded border border-neutral-400">
+    <li className="rounded border border-line">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -85,7 +85,7 @@ export function QueueItem({
               ? `${display(payload.dish)} — ${destinationLabel}`
               : `${display(currentFind?.dish)} (${display(currentFind?.place)})`}
           </span>
-          <span className="block text-xs text-neutral-600">
+          <span className="block text-xs text-secondary">
             Logged {logged}
             {submission.submitter_display
               ? ` by ${submission.submitter_display}`
@@ -98,7 +98,7 @@ export function QueueItem({
       </button>
 
       {open && (
-        <div className="border-t border-neutral-300 px-4 py-4">
+        <div className="border-t border-line px-4 py-4">
           {submission.type === "new_find" ? (
             <NewFindReview
               submissionId={submission.id}
@@ -166,7 +166,7 @@ function NewFindReview({
                 <img
                   src={findImageUrl(path)}
                   alt="Submitted photo"
-                  className="h-24 w-24 rounded border border-neutral-400 object-cover"
+                  className="h-24 w-24 rounded border border-line object-cover"
                 />
               </a>
             ))}
@@ -178,7 +178,7 @@ function NewFindReview({
         <button
           type="submit"
           disabled={pending}
-          className="flex-1 rounded bg-black px-4 py-3 font-bold text-white disabled:opacity-50"
+          className="flex-1 rounded bg-ink px-4 py-3 font-bold text-page disabled:opacity-50"
         >
           Publish
         </button>
@@ -186,7 +186,7 @@ function NewFindReview({
           type="button"
           disabled={pending}
           onClick={() => run(() => rejectSubmission(submissionId))}
-          className="rounded border border-neutral-400 px-4 py-3 font-bold disabled:opacity-50"
+          className="rounded border border-line px-4 py-3 font-bold disabled:opacity-50"
         >
           Reject
         </button>
@@ -223,7 +223,7 @@ function UpdateReview({
           type="button"
           disabled={pending}
           onClick={() => run(() => rejectSubmission(submissionId))}
-          className="mt-4 rounded border border-neutral-400 px-4 py-3 font-bold disabled:opacity-50"
+          className="mt-4 rounded border border-line px-4 py-3 font-bold disabled:opacity-50"
         >
           Reject
         </button>
@@ -254,7 +254,7 @@ function UpdateReview({
   return (
     <div>
       <p className="text-sm font-semibold">Report</p>
-      <p className="mt-1 whitespace-pre-wrap rounded border border-neutral-300 px-3 py-2 text-sm">
+      <p className="mt-1 whitespace-pre-wrap rounded border border-line px-3 py-2 text-sm">
         {display(payload.body)}
       </p>
 
@@ -265,7 +265,7 @@ function UpdateReview({
           </p>
           <ul className="mt-2 space-y-2">
             {changes.map(([key, label]) => (
-              <li key={key} className="rounded border border-neutral-300 p-3">
+              <li key={key} className="rounded border border-line p-3">
                 <label className="flex items-start gap-3">
                   <input
                     type="checkbox"
@@ -275,7 +275,7 @@ function UpdateReview({
                   />
                   <span className="text-sm">
                     <span className="font-semibold">{label}</span>
-                    <span className="block text-neutral-600 line-through">
+                    <span className="block text-secondary line-through">
                       {display(currentFind[key])}
                     </span>
                     <span className="block">{display(payload[key])}</span>
@@ -286,7 +286,7 @@ function UpdateReview({
           </ul>
         </>
       ) : (
-        <p className="mt-4 text-sm text-neutral-600">
+        <p className="mt-4 text-sm text-secondary">
           No field corrections proposed. Applying marks the report handled
           without changing the record.
         </p>
@@ -297,7 +297,7 @@ function UpdateReview({
           type="button"
           disabled={pending}
           onClick={apply}
-          className="flex-1 rounded bg-black px-4 py-3 font-bold text-white disabled:opacity-50"
+          className="flex-1 rounded bg-ink px-4 py-3 font-bold text-page disabled:opacity-50"
         >
           {accepted.size > 0
             ? `Apply ${accepted.size} and mark handled`
@@ -307,7 +307,7 @@ function UpdateReview({
           type="button"
           disabled={pending}
           onClick={() => run(() => rejectSubmission(submissionId))}
-          className="rounded border border-neutral-400 px-4 py-3 font-bold disabled:opacity-50"
+          className="rounded border border-line px-4 py-3 font-bold disabled:opacity-50"
         >
           Reject
         </button>

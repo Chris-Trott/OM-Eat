@@ -33,7 +33,7 @@ export default async function AdminQueuePage() {
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
       <h1 className="text-2xl font-bold">Submission queue</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+      <p className="mt-1 text-sm text-secondary">
         {submissions?.length
           ? `${submissions.length} pending, oldest first.`
           : "Queue clear. No action required."}

@@ -74,7 +74,7 @@ export function PhotoInput({
   return (
     <div>
       <span className="block text-sm font-semibold">Photos</span>
-      <p className="mt-1 text-xs text-neutral-600">
+      <p className="mt-1 text-xs text-secondary">
         Optional, up to {MAX_PHOTOS}. Show the item, or a landmark on the
         route to it. Photos are reviewed before publication.
       </p>
@@ -87,13 +87,13 @@ export function PhotoInput({
               <img
                 src={photo}
                 alt={`Attached photo ${index + 1}`}
-                className="h-24 w-24 rounded border border-neutral-400 object-cover"
+                className="h-24 w-24 rounded border border-line object-cover"
               />
               <button
                 type="button"
                 onClick={() => onChange(photos.filter((_, i) => i !== index))}
                 aria-label={`Remove photo ${index + 1}`}
-                className="absolute -right-2 -top-2 h-6 w-6 rounded-full border border-neutral-400 bg-white text-xs font-bold leading-none"
+                className="absolute -right-2 -top-2 h-6 w-6 rounded-full border border-line bg-surface text-xs font-bold leading-none"
               >
                 ×
               </button>
@@ -107,7 +107,7 @@ export function PhotoInput({
           type="button"
           disabled={busy}
           onClick={() => inputRef.current?.click()}
-          className="mt-2 rounded border border-neutral-400 bg-white px-4 py-2 text-sm font-semibold disabled:opacity-50"
+          className="mt-2 rounded border border-line bg-surface px-4 py-2 text-sm font-semibold disabled:opacity-50"
         >
           {busy ? "Processing…" : "Attach photo"}
         </button>

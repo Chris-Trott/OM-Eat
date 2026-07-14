@@ -33,19 +33,19 @@ export default async function DestinationPage({
     <main className="mx-auto max-w-xl px-4 py-8">
       <p className="font-mono text-sm font-bold">{destination.iata}</p>
       <h1 className="text-2xl font-bold">{destination.city}</h1>
-      <p className="text-sm text-neutral-600">
+      <p className="text-sm text-secondary">
         <span aria-hidden="true">{countryFlag(destination.country)}</span>{" "}
         {destination.country}
       </p>
 
       {!finds?.length ? (
-        <section className="mt-10 rounded border border-neutral-400 p-6 text-center">
-          <p className="text-base font-semibold">
+        <section className="mt-10 rounded border border-line bg-surface p-6 text-center">
+          <p className="font-sans text-lg font-bold">
             Nothing found here yet. Be the first.
           </p>
           <Link
             href={`/add?destination=${slug}`}
-            className="mt-4 inline-block rounded bg-black px-6 py-3 font-bold text-white"
+            className="mt-4 inline-block rounded border-2 border-ink bg-ink px-6 py-3 font-sans font-bold text-page no-underline"
           >
             Add a Find
           </Link>
@@ -53,14 +53,17 @@ export default async function DestinationPage({
       ) : (
         <ul className="mt-6">
           {finds.map((f) => (
-            <li key={f.id} className="border-b border-neutral-300">
-              <Link href={`/finds/${f.id}`} className="block py-4">
+            <li key={f.id} className="border-b border-line">
+              <Link
+                href={`/finds/${f.id}`}
+                className="block py-4 text-ink no-underline"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-lg font-bold">{f.dish}</p>
+                    <p className="font-sans text-lg font-bold">{f.dish}</p>
                     <p className="text-sm">{f.place}</p>
                     {f.walking_time && (
-                      <p className="mt-1 text-xs text-neutral-600">
+                      <p className="mt-1 text-xs text-muted">
                         {f.walking_time} on foot
                       </p>
                     )}
@@ -77,7 +80,7 @@ export default async function DestinationPage({
         <div className="mt-8">
           <Link
             href={`/add?destination=${slug}`}
-            className="block w-full rounded border-2 border-black px-4 py-3 text-center font-bold"
+            className="block w-full rounded border-2 border-ink px-4 py-3 text-center font-sans font-bold text-ink no-underline"
           >
             Add a Find at {destination.city}
           </Link>

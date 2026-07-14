@@ -13,7 +13,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="min-h-screen">
-      <header className="border-b border-neutral-300">
+      <header className="border-b border-line">
         <nav className="mx-auto flex max-w-xl items-center gap-5 px-4 py-3 text-sm font-semibold">
           <span className="font-mono font-bold">Curation</span>
           <Link href="/admin" className="underline">

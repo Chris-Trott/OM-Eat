@@ -16,7 +16,7 @@ export default async function AdminFindsPage() {
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
       <h1 className="text-2xl font-bold">Finds</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+      <p className="mt-1 text-sm text-secondary">
         {finds?.length
           ? `${finds.length} on record, newest first.`
           : "No Finds on record."}
@@ -28,7 +28,7 @@ export default async function AdminFindsPage() {
             ? f.destinations[0]
             : f.destinations;
           return (
-            <li key={f.id} className="border-b border-neutral-300">
+            <li key={f.id} className="border-b border-line">
               <Link href={`/admin/finds/${f.id}`} className="block py-4">
                 <div className="flex items-baseline justify-between gap-3">
                   <div>

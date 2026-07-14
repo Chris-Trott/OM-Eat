@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -19,6 +21,10 @@ export const metadata: Metadata = {
     "Reference guide to what to eat on a turnaround, maintained by BA Euroflyer crew at London Gatwick.",
 };
 
+// Follow the device theme before first paint; tokens live under
+// [data-theme="dark"] in globals.css.
+const themeScript = `if(window.matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.setAttribute("data-theme","dark");`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,19 +33,23 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${plexSans.variable} ${plexMono.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
-        <header className="border-b border-neutral-300">
-          <nav className="mx-auto flex max-w-xl items-center justify-between px-4 py-3 text-sm font-semibold">
-            <Link href="/" className="font-mono font-bold">
+        <header className="border-b border-line">
+          <nav className="mx-auto flex w-full max-w-xl items-center justify-between px-4 py-3 font-mono text-sm font-semibold">
+            <Link href="/" className="font-mono font-bold text-ink no-underline">
               OM-Eat
             </Link>
             <span className="flex gap-4">
-              <Link href="/destinations" className="underline">
+              <Link href="/destinations" className="text-accent no-underline">
                 Destinations
               </Link>
-              <Link href="/add" className="underline">
+              <Link href="/add" className="text-accent no-underline">
                 Add a Find
               </Link>
             </span>

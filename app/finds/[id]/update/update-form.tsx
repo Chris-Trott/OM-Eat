@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CURRENCIES } from "@/lib/currencies";
 
 const inputClass =
-  "mt-1 w-full rounded border border-neutral-400 bg-white px-3 py-2 text-base";
+  "mt-1 w-full rounded border border-line bg-surface px-3 py-2 text-base";
 const labelClass = "block text-sm font-semibold";
 
 export function UpdateForm({ findId }: { findId: string }) {
@@ -16,17 +16,17 @@ export function UpdateForm({ findId }: { findId: string }) {
 
   if (logged) {
     return (
-      <section className="mt-8 rounded border border-neutral-400 p-6">
+      <section className="mt-8 rounded border border-line bg-surface p-6">
         <h2 className="text-lg font-bold">Correction logged.</h2>
-        <p className="mt-2 text-sm">
+        <p className="mt-2 text-sm text-secondary">
           A curator will review this report against the current record. No
           further action is required.
         </p>
         <div className="mt-4 flex gap-4 text-sm font-semibold">
-          <Link href="/" className="underline">
+          <Link href="/" className="text-accent no-underline">
             Return to home
           </Link>
-          <Link href="/destinations" className="underline">
+          <Link href="/destinations" className="text-accent no-underline">
             Destinations
           </Link>
         </div>
@@ -104,7 +104,7 @@ export function UpdateForm({ findId }: { findId: string }) {
         <label className={labelClass} htmlFor="body">
           What has changed? <span aria-hidden="true">*</span>
         </label>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-secondary">
           Closed down, moved, price rise, new hours — state the facts.
         </p>
         <textarea
@@ -121,7 +121,7 @@ export function UpdateForm({ findId }: { findId: string }) {
         type="button"
         onClick={() => setShowCorrections((v) => !v)}
         aria-expanded={showCorrections}
-        className="text-sm font-semibold underline"
+        className="text-sm font-semibold text-accent no-underline"
       >
         {showCorrections
           ? "Hide field corrections"
@@ -129,8 +129,8 @@ export function UpdateForm({ findId }: { findId: string }) {
       </button>
 
       {showCorrections && (
-        <div className="space-y-5 rounded border border-neutral-300 p-4">
-          <p className="text-xs text-neutral-600">
+        <div className="space-y-5 rounded border border-line p-4">
+          <p className="text-xs text-secondary">
             Fill in only the fields that are wrong. Everything here is
             optional.
           </p>
@@ -237,7 +237,7 @@ export function UpdateForm({ findId }: { findId: string }) {
             <label className={labelClass} htmlFor="maps_url">
               Map link
             </label>
-            <p className="mt-1 text-xs text-neutral-600">Landside Finds only.</p>
+            <p className="mt-1 text-xs text-secondary">Landside Finds only.</p>
             <input
               id="maps_url"
               name="maps_url"
@@ -254,7 +254,7 @@ export function UpdateForm({ findId }: { findId: string }) {
         <label className={labelClass} htmlFor="submitter_display">
           Your name
         </label>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-secondary">
           Optional. First name and last initial only, e.g. “Chris T”.
         </p>
         <input id="submitter_display" name="submitter_display" maxLength={40} className={inputClass} />
@@ -269,7 +269,7 @@ export function UpdateForm({ findId }: { findId: string }) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded bg-black px-4 py-3 text-base font-bold text-white disabled:opacity-50"
+        className="w-full rounded border-2 border-ink bg-ink px-4 py-3 font-sans text-lg font-bold text-page disabled:opacity-50"
       >
         {submitting ? "Logging…" : "Submit correction"}
       </button>

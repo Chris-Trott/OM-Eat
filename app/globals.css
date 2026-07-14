@@ -1,22 +1,86 @@
 @import "tailwindcss";
 
-/* The manual is printed on paper. Force light rendering so form controls
-   stay legible on devices set to dark mode. */
+/* OM-Eat design tokens. Light is the default (the manual is printed on
+   paper); dark is an explicit opt-in via [data-theme="dark"], set on <html>
+   from a matchMedia check at load so form controls follow the theme. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --om-page: #fafaf7;
+  --om-surface: #ffffff;
+  --om-border: #e6e5df;
+  --om-text-primary: #1b1b19;
+  --om-text-secondary: #6e6e66;
+  --om-text-muted: #9a9a92;
+  --om-accent: #1e5f6b;
+  --om-accent-contrast: #ffffff;
+
+  --om-airside-bg: #e6efe7;
+  --om-airside-fg: #1f5e38;
+  --om-landside-bg: #f5eddc;
+  --om-landside-fg: #7a5410;
+
   color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  --om-page: #121311;
+  --om-surface: #1a1b18;
+  --om-border: #2f312c;
+  --om-text-primary: #f1f1ec;
+  --om-text-secondary: #9e9e95;
+  --om-text-muted: #6e6e67;
+  --om-accent: #7fbcc7;
+  --om-accent-contrast: #121311;
+
+  --om-airside-bg: #1b3324;
+  --om-airside-fg: #8fcba6;
+  --om-landside-bg: #332714;
+  --om-landside-fg: #dfb56a;
+
+  color-scheme: dark;
 }
 
+@theme inline {
+  --color-page: var(--om-page);
+  --color-surface: var(--om-surface);
+  --color-line: var(--om-border);
+  --color-ink: var(--om-text-primary);
+  --color-secondary: var(--om-text-secondary);
+  --color-muted: var(--om-text-muted);
+  --color-accent: var(--om-accent);
+  --color-accent-contrast: var(--om-accent-contrast);
+  --color-airside-bg: var(--om-airside-bg);
+  --color-airside-fg: var(--om-airside-fg);
+  --color-landside-bg: var(--om-landside-bg);
+  --color-landside-fg: var(--om-landside-fg);
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* IBM Plex Sans for titles and headings; IBM Plex Mono for body copy and
+   codes — the deliberate "computer system" register of an ops manual. */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--om-page);
+  color: var(--om-text-primary);
+  font-family: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.15;
+}
+
+a {
+  text-underline-offset: 2px;
+}
+a:hover {
+  opacity: 0.75;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--om-accent) 25%, transparent);
 }

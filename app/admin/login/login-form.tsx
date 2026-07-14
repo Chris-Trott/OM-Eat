@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createAuthBrowserClient } from "@/lib/supabase/browser";
 
 const inputClass =
-  "mt-1 w-full rounded border border-neutral-400 bg-white px-3 py-2 text-base";
+  "mt-1 w-full rounded border border-line bg-surface px-3 py-2 text-base";
 const labelClass = "block text-sm font-semibold";
 
 export function LoginForm() {
@@ -77,7 +77,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded bg-black px-4 py-3 text-base font-bold text-white disabled:opacity-50"
+        className="w-full rounded bg-ink px-4 py-3 text-base font-bold text-page disabled:opacity-50"
       >
         {submitting ? "Checking…" : "Sign in"}
       </button>

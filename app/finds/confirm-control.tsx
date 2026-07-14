@@ -91,11 +91,11 @@ export function ConfirmControl({
 
   return (
     <div className="mt-3">
-      <p className="text-sm font-semibold" aria-live="polite">
+      <p className="text-sm font-semibold text-muted" aria-live="polite">
         {freshnessLine(count, lastConfirmedAt)}
       </p>
       {confirmed ? (
-        <p className="mt-2 inline-block rounded border border-neutral-400 px-3 py-2 text-sm font-semibold">
+        <p className="mt-2 inline-block rounded border border-line px-3 py-2 text-sm font-semibold text-secondary">
           👍 Confirmed on this device.
         </p>
       ) : (
@@ -103,7 +103,7 @@ export function ConfirmControl({
           type="button"
           onClick={onConfirm}
           disabled={sending}
-          className="mt-2 rounded border-2 border-black px-4 py-2 text-sm font-bold disabled:opacity-50"
+          className="mt-2 rounded border-2 border-accent px-4 py-2 font-sans text-sm font-bold text-accent disabled:opacity-50"
         >
           {sending ? "Logging…" : "👍 Still correct"}
         </button>

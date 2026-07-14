@@ -10,14 +10,14 @@ export default function HomePage() {
   return (
     <main className="mx-auto max-w-xl px-4 py-10">
       <h1 className="text-3xl font-bold tracking-tight">OM-Eat</h1>
-      <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-neutral-600">
+      <p className="mt-1 font-mono text-sm font-semibold uppercase tracking-wide text-secondary">
         Ops Manual E(at) — Gatwick short-haul edition
       </p>
 
       <div className="mt-8">
         <Link
           href="/destinations"
-          className="block w-full rounded bg-black px-4 py-4 text-center text-lg font-bold text-white"
+          className="block w-full rounded border-2 border-ink bg-ink px-4 py-4 text-center font-sans text-lg font-bold text-page no-underline"
         >
           Destinations
         </Link>
@@ -46,13 +46,13 @@ export default function HomePage() {
       <div className="mt-8">
         <Link
           href="/add"
-          className="block w-full rounded border-2 border-black px-4 py-4 text-center text-lg font-bold"
+          className="block w-full rounded border-2 border-ink px-4 py-4 text-center font-sans text-lg font-bold text-ink no-underline"
         >
           Add a Find
         </Link>
       </div>
 
-      <p className="mt-10 text-xs text-neutral-600">
+      <p className="mt-10 text-xs text-muted">
         Revision status: continuous. Distribution: unrestricted.
       </p>
     </main>

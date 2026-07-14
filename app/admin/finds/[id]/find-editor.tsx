@@ -23,7 +23,7 @@ export function FindEditor({ find }: { find: Record<string, unknown> }) {
   return (
     <div className="mt-6">
       {status === "archived" && (
-        <p className="mb-4 rounded border border-neutral-400 px-3 py-2 text-sm font-semibold">
+        <p className="mb-4 rounded border border-line px-3 py-2 text-sm font-semibold">
           Archived. Not shown on the public site.
         </p>
       )}
@@ -46,7 +46,7 @@ export function FindEditor({ find }: { find: Record<string, unknown> }) {
           </p>
         )}
         {notice && (
-          <p className="mt-4 rounded border border-neutral-400 px-3 py-2 text-sm font-semibold">
+          <p className="mt-4 rounded border border-line px-3 py-2 text-sm font-semibold">
             {notice}
           </p>
         )}
@@ -55,7 +55,7 @@ export function FindEditor({ find }: { find: Record<string, unknown> }) {
           <button
             type="submit"
             disabled={pending}
-            className="flex-1 rounded bg-black px-4 py-3 font-bold text-white disabled:opacity-50"
+            className="flex-1 rounded bg-ink px-4 py-3 font-bold text-page disabled:opacity-50"
           >
             Save changes
           </button>
@@ -70,7 +70,7 @@ export function FindEditor({ find }: { find: Record<string, unknown> }) {
               );
               setStatus(next);
             }}
-            className="rounded border border-neutral-400 px-4 py-3 font-bold disabled:opacity-50"
+            className="rounded border border-line px-4 py-3 font-bold disabled:opacity-50"
           >
             {status === "archived" ? "Restore" : "Archive"}
           </button>

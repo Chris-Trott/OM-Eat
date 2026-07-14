@@ -32,7 +32,7 @@ export default async function UpdateFindPage({
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
       <h1 className="text-2xl font-bold">Update details</h1>
-      <p className="mt-2 text-sm">
+      <p className="mt-2 text-sm text-secondary">
         Reporting a correction to{" "}
         <strong>
           {find.dish}, {find.place}

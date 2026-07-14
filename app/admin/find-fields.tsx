@@ -8,7 +8,7 @@ import { CURRENCIES } from "@/lib/currencies";
 // numeric cast and the airside/maps_url rule.
 
 const inputClass =
-  "mt-1 w-full rounded border border-neutral-400 bg-white px-3 py-2 text-base";
+  "mt-1 w-full rounded border border-line bg-surface px-3 py-2 text-base";
 const labelClass = "block text-sm font-semibold";
 
 export type FindFieldValues = Record<string, unknown>;

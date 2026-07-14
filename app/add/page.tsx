@@ -26,7 +26,7 @@ export default async function AddFindPage({
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
       <h1 className="text-2xl font-bold">Add a Find</h1>
-      <p className="mt-2 text-sm">
+      <p className="mt-2 text-sm text-secondary">
         Report one specific thing to eat, at one specific place, at one
         destination. Entries are reviewed by a curator before publication.
       </p>

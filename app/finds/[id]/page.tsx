@@ -63,7 +63,7 @@ export default async function FindPage({
       {destination && (
         <Link
           href={`/destinations/${destination.slug}`}
-          className="font-mono text-sm font-bold underline"
+          className="font-mono text-sm font-bold text-accent no-underline"
         >
           {destination.iata} {destination.city}
         </Link>
@@ -82,13 +82,13 @@ export default async function FindPage({
         initialLastConfirmedAt={find.last_confirmed_at}
       />
 
-      <dl className="mt-6 divide-y divide-neutral-300 border-y border-neutral-300">
+      <dl className="mt-6 divide-y divide-line border-y border-line">
         {facts
           .filter(([, value]) => value)
           .map(([label, value]) => (
             <div key={label} className="flex justify-between gap-4 py-2">
               <dt className="text-sm font-semibold">{label}</dt>
-              <dd className="text-sm text-right">{value}</dd>
+              <dd className="text-sm text-right text-secondary">{value}</dd>
             </div>
           ))}
       </dl>
@@ -101,7 +101,7 @@ export default async function FindPage({
               key={image.id}
               src={findImageUrl(image.storage_path)}
               alt={image.alt_text}
-              className="w-full rounded border border-neutral-300 object-cover"
+              className="w-full rounded border border-line object-cover"
             />
           ))}
         </div>
@@ -109,7 +109,7 @@ export default async function FindPage({
 
       {find.directions && (
         <section className="mt-6">
-          <h2 className="text-sm font-bold uppercase tracking-wide">
+          <h2 className="text-sm font-bold uppercase tracking-widest">
             Directions
           </h2>
           <p className="mt-2 whitespace-pre-line text-base">
@@ -124,7 +124,7 @@ export default async function FindPage({
             href={find.maps_url}
             rel="noopener noreferrer nofollow"
             target="_blank"
-            className="text-sm font-semibold underline"
+            className="text-sm font-semibold text-accent no-underline"
           >
             Map link (external)
           </a>
@@ -132,19 +132,19 @@ export default async function FindPage({
       )}
 
       {find.submitter_display && (
-        <p className="mt-6 text-xs text-neutral-600">
+        <p className="mt-6 text-xs text-muted">
           Reported by {find.submitter_display}.
         </p>
       )}
 
-      <div className="mt-8 border-t border-neutral-300 pt-4">
+      <div className="mt-8 border-t border-line pt-4">
         <Link
           href={`/finds/${find.id}/update`}
-          className="text-sm font-semibold underline"
+          className="text-sm font-semibold text-accent no-underline"
         >
           Update details
         </Link>
-        <p className="mt-1 text-xs text-neutral-600">
+        <p className="mt-1 text-xs text-muted">
           Closed down, moved, wrong price? File a correction.
         </p>
       </div>
