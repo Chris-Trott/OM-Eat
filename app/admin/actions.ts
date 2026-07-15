@@ -52,6 +52,10 @@ function mapPayloadToFind(payload: Payload): Record<string, unknown> {
   // Database check constraint: maps_url is landside only.
   if (row.airside === true) row.maps_url = null;
 
+  // Curator-only flag, not yet shown publicly. Checkbox semantics: absent
+  // or anything but true means false.
+  row.crew_discount = payload.crew_discount === true;
+
   return row;
 }
 
@@ -117,7 +121,7 @@ export async function applyUpdate(
 
   const { data: submission } = await supabase
     .from("submissions")
-    .select("id, find_id, status")
+    .select("id, find_id, status, payload")
     .eq("id", submissionId)
     .eq("type", "update")
     .eq("status", "pending")
@@ -138,6 +142,44 @@ export async function applyUpdate(
       .update(changes)
       .eq("id", submission.find_id);
     if (error) return { error: error.message };
+  }
+
+  // Photos: attach only the paths the curator accepted, and only ones that
+  // actually came with this submission — never arbitrary client strings.
+  const submittedPaths = imagePaths(submission.payload ?? {});
+  const acceptedPaths = imagePaths(acceptedFields).filter((path) =>
+    submittedPaths.includes(path),
+  );
+  if (acceptedPaths.length > 0) {
+    const { data: find } = await supabase
+      .from("finds")
+      .select("dish")
+      .eq("id", submission.find_id)
+      .maybeSingle();
+    const { count } = await supabase
+      .from("find_images")
+      .select("id", { count: "exact", head: true })
+      .eq("find_id", submission.find_id);
+    const { error: imagesError } = await supabase.from("find_images").insert(
+      acceptedPaths.map((path, index) => ({
+        find_id: submission.find_id,
+        storage_path: path,
+        alt_text: String(find?.dish ?? "Find photo"),
+        sort_order: (count ?? 0) + index,
+      })),
+    );
+    if (imagesError) return { error: imagesError.message };
+  }
+
+  // Unaccepted photos never reach the Find; clear them from storage.
+  // Best-effort, as in rejectSubmission.
+  const leftover = submittedPaths.filter(
+    (path) => !acceptedPaths.includes(path),
+  );
+  if (leftover.length > 0) {
+    await createServiceClient()
+      .storage.from(FIND_IMAGES_BUCKET)
+      .remove(leftover);
   }
 
   const { error } = await supabase
@@ -182,6 +224,100 @@ export async function setFindStatus(
     .update({ status })
     .eq("id", findId);
   if (error) return { error: error.message };
+
+  revalidatePath("/", "layout");
+  return {};
+}
+
+// Curator adds photos directly to a published Find. The database writes go
+// through the authenticated client (RLS authority); storage uses the service
+// key, so the session is checked explicitly first.
+export async function addFindImages(
+  findId: string,
+  dataUrls: string[],
+): Promise<{ error?: string }> {
+  const supabase = await createAuthClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  const { data: find } = await supabase
+    .from("finds")
+    .select("id, dish")
+    .eq("id", findId)
+    .maybeSingle();
+  if (!find) return { error: "Find not found." };
+
+  const { count } = await supabase
+    .from("find_images")
+    .select("id", { count: "exact", head: true })
+    .eq("find_id", findId);
+  const existing = count ?? 0;
+  if (existing + dataUrls.length > 3) {
+    return { error: "A Find carries at most 3 photos." };
+  }
+
+  const storage = createServiceClient().storage.from(FIND_IMAGES_BUCKET);
+
+  for (const [index, dataUrl] of dataUrls.entries()) {
+    const match = dataUrl.match(/^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/);
+    if (!match) return { error: "Photos must be attached via the form." };
+    const bytes = Buffer.from(match[1], "base64");
+    if (bytes.length > 1024 * 1024) {
+      return { error: "Each photo must be under 1 MB." };
+    }
+
+    const path = `finds/${crypto.randomUUID()}.jpg`;
+    const { error: uploadError } = await storage.upload(path, bytes, {
+      contentType: "image/jpeg",
+    });
+    if (uploadError) return { error: "Photo upload failed. Try again." };
+
+    const { error: insertError } = await supabase.from("find_images").insert({
+      find_id: findId,
+      storage_path: path,
+      alt_text: String(find.dish ?? "Find photo"),
+      sort_order: existing + index,
+    });
+    if (insertError) {
+      await storage.remove([path]);
+      return { error: insertError.message };
+    }
+  }
+
+  revalidatePath("/", "layout");
+  return {};
+}
+
+export async function removeFindImage(
+  imageId: string,
+): Promise<{ error?: string }> {
+  const supabase = await createAuthClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  const { data: image } = await supabase
+    .from("find_images")
+    .select("id, storage_path")
+    .eq("id", imageId)
+    .maybeSingle();
+  if (!image) return { error: "Photo not found." };
+
+  const { error } = await supabase
+    .from("find_images")
+    .delete()
+    .eq("id", imageId);
+  if (error) return { error: error.message };
+
+  // Best-effort storage cleanup; the record removal has already succeeded.
+  await createServiceClient()
+    .storage.from(FIND_IMAGES_BUCKET)
+    .remove([image.storage_path]);
 
   revalidatePath("/", "layout");
   return {};

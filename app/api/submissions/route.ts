@@ -96,27 +96,12 @@ export async function POST(request: Request) {
   let payload: Record<string, unknown>;
   let findId: string | null = null;
 
-  if (type === "new_find") {
-    if (!dish || !place || airside === null) {
-      return invalid(
-        "Destination, dish, place, and airside/landside are required.",
-      );
-    }
-
-    // Resolve the destination server-side; use the id the database
-    // returned, never the client string.
-    const { data: destination } = await supabase
-      .from("destinations")
-      .select("id")
-      .eq("id", text(body.destination_id, 36) ?? "")
-      .maybeSingle();
-    if (!destination) {
-      return invalid("Unknown destination.");
-    }
-
-    // Photos: compressed client-side, capped again here (the bucket also
-    // enforces 1 MB). They land in an unlisted submissions/ path and are only
-    // linked to a Find if a curator publishes.
+  // Photos, allowed on both types: compressed client-side, capped again here
+  // (the bucket also enforces 1 MB). They land in an unlisted submissions/
+  // path and are only linked to a Find if a curator publishes or applies.
+  // Returns a NextResponse on failure. Called only after the destination or
+  // Find has been resolved, so an invalid submission uploads nothing.
+  async function uploadImages(): Promise<string[] | NextResponse> {
     const imagePaths: string[] = [];
     const images = Array.isArray(body.images) ? body.images.slice(0, 3) : [];
     for (const image of images) {
@@ -141,6 +126,29 @@ export async function POST(request: Request) {
       }
       imagePaths.push(path);
     }
+    return imagePaths;
+  }
+
+  if (type === "new_find") {
+    if (!dish || !place || airside === null) {
+      return invalid(
+        "Destination, dish, place, and airside/landside are required.",
+      );
+    }
+
+    // Resolve the destination server-side; use the id the database
+    // returned, never the client string.
+    const { data: destination } = await supabase
+      .from("destinations")
+      .select("id")
+      .eq("id", text(body.destination_id, 36) ?? "")
+      .maybeSingle();
+    if (!destination) {
+      return invalid("Unknown destination.");
+    }
+
+    const imagePaths = await uploadImages();
+    if (imagePaths instanceof NextResponse) return imagePaths;
 
     payload = { destination_id: destination.id, ...fields };
     if (imagePaths.length > 0) payload.image_paths = imagePaths;
@@ -162,8 +170,12 @@ export async function POST(request: Request) {
       return invalid("Unknown Find.");
     }
 
+    const imagePaths = await uploadImages();
+    if (imagePaths instanceof NextResponse) return imagePaths;
+
     findId = find.id;
     payload = { body: correction, ...fields };
+    if (imagePaths.length > 0) payload.image_paths = imagePaths;
   }
 
   const { error } = await supabase.from("submissions").insert({

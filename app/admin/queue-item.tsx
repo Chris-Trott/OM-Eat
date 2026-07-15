@@ -237,6 +237,10 @@ function UpdateReview({
     return display(proposed) !== display(currentFind[key]);
   });
 
+  const imagePaths = Array.isArray(payload.image_paths)
+    ? payload.image_paths.filter((p): p is string => typeof p === "string")
+    : [];
+
   const toggle = (key: string) =>
     setAccepted((prev) => {
       const next = new Set(prev);
@@ -257,6 +261,34 @@ function UpdateReview({
       <p className="mt-1 whitespace-pre-wrap rounded border border-line px-3 py-2 text-sm">
         {display(payload.body)}
       </p>
+
+      {imagePaths.length > 0 && (
+        <div className="mt-4 rounded border border-line p-3">
+          <label className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              checked={accepted.has("image_paths")}
+              onChange={() => toggle("image_paths")}
+              className="mt-1 h-4 w-4"
+            />
+            <span className="text-sm font-semibold">
+              Attach submitted photos to the record
+            </span>
+          </label>
+          <div className="mt-2 flex gap-3">
+            {imagePaths.map((path) => (
+              <a key={path} href={findImageUrl(path)} target="_blank" rel="noopener noreferrer">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={findImageUrl(path)}
+                  alt="Submitted photo"
+                  className="h-24 w-24 rounded border border-line object-cover"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {changes.length > 0 ? (
         <>

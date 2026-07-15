@@ -26,21 +26,14 @@ export default function HomePage() {
       <section className="mt-8 space-y-4 text-base">
         <p>
           This manual records what to eat at each destination during a
-          turnaround, as reported by operating crew. Each entry is one
-          specific item, at one specific place, at one destination, with
-          directions and timings suitable for a crew member on limited
-          ground time.
-        </p>
-        <p>
-          Entries are classified <strong>airside</strong> or{" "}
-          <strong>landside</strong>. Check the classification before setting
-          out; the manual accepts no responsibility for missed departures.
+          turnaround, as reported by operating crew.
         </p>
         <p>
           All entries are reviewed by a curator before publication and
           re-confirmed by crew over time. Where information is found to be
           out of date, file a correction from the entry concerned.
         </p>
+        <p>The manual accepts no responsibility for missed departures.</p>
       </section>
 
       <div className="mt-8">

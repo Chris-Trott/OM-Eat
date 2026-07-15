@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase/auth";
 import { FindEditor } from "./find-editor";
+import { FindPhotos } from "./find-photos";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,12 @@ export default async function AdminFindEditPage({
 
   if (!find) notFound();
 
+  const { data: images } = await supabase
+    .from("find_images")
+    .select("id, storage_path, alt_text")
+    .eq("find_id", id)
+    .order("sort_order");
+
   const destination = Array.isArray(find.destinations)
     ? find.destinations[0]
     : find.destinations;
@@ -33,6 +40,7 @@ export default async function AdminFindEditPage({
       <p className="text-sm text-secondary">{find.place}</p>
 
       <FindEditor find={find} />
+      <FindPhotos findId={find.id} images={images ?? []} />
     </main>
   );
 }

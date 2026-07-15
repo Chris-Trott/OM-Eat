@@ -295,7 +295,7 @@ export function SubmissionForm({
           Your name
         </label>
         <p className="mt-1 text-xs text-secondary">
-          Optional. First name and last initial only, e.g. “Chris T”. Displayed
+          Optional. First name and last initial only, e.g. “Tom S”. Displayed
           against the Find if published.
         </p>
         <input id="submitter_display" name="submitter_display" maxLength={40} className={inputClass} />

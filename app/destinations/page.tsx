@@ -14,13 +14,16 @@ type Destination = {
   city: string;
   country: string;
   slug: string;
+  finds: { count: number }[];
 };
 
 export default async function DestinationsPage() {
   const supabase = createPublicClient();
+  // The anon RLS policy only exposes published Finds, so this count is
+  // exactly what the destination page will show.
   const { data } = await supabase
     .from("destinations")
-    .select("id, iata, city, country, slug")
+    .select("id, iata, city, country, slug, finds(count)")
     .order("country")
     .order("city");
 
@@ -37,8 +40,7 @@ export default async function DestinationsPage() {
     <main className="mx-auto max-w-xl px-4 py-8">
       <h1 className="text-2xl font-bold">Destinations</h1>
       <p className="mt-2 text-sm text-secondary">
-        Network coverage as operated from London Gatwick. Select a
-        destination for its entries.
+        Select a destination for its recommendations.
       </p>
 
       {[...byCountry.entries()].map(([country, group]) => (
@@ -47,19 +49,31 @@ export default async function DestinationsPage() {
             <span aria-hidden="true">{countryFlag(country)}</span> {country}
           </h2>
           <ul>
-            {group.map((d) => (
-              <li key={d.id} className="border-b border-line">
-                <Link
-                  href={`/destinations/${d.slug}`}
-                  className="flex items-baseline gap-3 py-3 text-ink no-underline"
-                >
-                  <span className="w-12 shrink-0 font-mono text-sm font-bold">
-                    {d.iata}
-                  </span>
-                  <span className="text-base">{d.city}</span>
-                </Link>
-              </li>
-            ))}
+            {group.map((d) => {
+              const count = d.finds?.[0]?.count ?? 0;
+              return (
+                <li key={d.id} className="border-b border-line">
+                  <Link
+                    href={`/destinations/${d.slug}`}
+                    className="flex items-baseline gap-3 py-3 text-ink no-underline"
+                  >
+                    <span className="w-12 shrink-0 font-mono text-sm font-bold">
+                      {d.iata}
+                    </span>
+                    <span
+                      className={`text-base ${count === 0 ? "text-secondary" : ""}`}
+                    >
+                      {d.city}
+                    </span>
+                    <span className="ml-auto shrink-0 font-mono text-xs text-muted">
+                      {count === 0
+                        ? "NIL"
+                        : `${count} ${count === 1 ? "entry" : "entries"}`}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ))}

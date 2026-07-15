@@ -32,6 +32,7 @@ export function readFindFields(form: FormData): FindFieldValues {
     opening_hours: value("opening_hours"),
     directions: value("directions"),
     maps_url: value("maps_url"),
+    crew_discount: form.get("crew_discount") === "on",
   };
 }
 
@@ -159,6 +160,24 @@ export function FindFields({ values }: { values: FindFieldValues }) {
           placeholder="https://…"
           className={inputClass}
         />
+      </div>
+
+      <div>
+        <label className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            name="crew_discount"
+            defaultChecked={values.crew_discount === true}
+            className="mt-1 h-4 w-4"
+          />
+          <span className="text-sm">
+            <span className="font-semibold">Crew discount</span>
+            <span className="block text-xs text-secondary">
+              Discount available on production of ID. Recorded only; not yet
+              shown on the public site.
+            </span>
+          </span>
+        </label>
       </div>
     </div>
   );

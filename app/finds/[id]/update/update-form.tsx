@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CURRENCIES } from "@/lib/currencies";
+import { PhotoInput } from "@/app/add/photo-input";
 
 const inputClass =
   "mt-1 w-full rounded border border-line bg-surface px-3 py-2 text-base";
@@ -10,6 +11,7 @@ const labelClass = "block text-sm font-semibold";
 
 export function UpdateForm({ findId }: { findId: string }) {
   const [showCorrections, setShowCorrections] = useState(false);
+  const [photos, setPhotos] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [logged, setLogged] = useState(false);
@@ -69,6 +71,7 @@ export function UpdateForm({ findId }: { findId: string }) {
           directions: value("directions"),
           maps_url: value("maps_url"),
           submitter_display: value("submitter_display"),
+          images: photos,
         }),
       });
 
@@ -250,12 +253,14 @@ export function UpdateForm({ findId }: { findId: string }) {
         </div>
       )}
 
+      <PhotoInput photos={photos} onChange={setPhotos} />
+
       <div>
         <label className={labelClass} htmlFor="submitter_display">
           Your name
         </label>
         <p className="mt-1 text-xs text-secondary">
-          Optional. First name and last initial only, e.g. “Chris T”.
+          Optional. First name and last initial only, e.g. “Tom S”.
         </p>
         <input id="submitter_display" name="submitter_display" maxLength={40} className={inputClass} />
       </div>
