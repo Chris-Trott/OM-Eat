@@ -1,6 +1,5 @@
 "use client";
 
-import { CURRENCIES } from "@/lib/currencies";
 
 // Shared curator field editor: used pre-filled from a submission payload in
 // the queue (edit then publish) and from the live row on the Find edit page.
@@ -26,7 +25,7 @@ export function readFindFields(form: FormData): FindFieldValues {
       airside === "airside" ? true : airside === "landside" ? false : null,
     walking_time: value("walking_time"),
     cost_amount: value("cost_amount"),
-    cost_currency: value("cost_currency"),
+    cost_qty: value("cost_qty"),
     payment: value("payment"),
     opening_hours: value("opening_hours"),
     directions: value("directions"),
@@ -83,30 +82,30 @@ export function FindFields({ values }: { values: FindFieldValues }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelClass} htmlFor="cost_amount">
-            Cost
+            Price
           </label>
           <input
             id="cost_amount"
             name="cost_amount"
-            maxLength={100}
+            inputMode="decimal"
+            maxLength={12}
             defaultValue={text("cost_amount")}
             className={inputClass}
           />
         </div>
         <div>
-          <label className={labelClass} htmlFor="cost_currency">
-            Currency
+          <label className={labelClass} htmlFor="cost_qty">
+            For how many
           </label>
           <select
-            id="cost_currency"
-            name="cost_currency"
-            defaultValue={text("cost_currency")}
+            id="cost_qty"
+            name="cost_qty"
+            defaultValue={text("cost_qty") || "1"}
             className={inputClass}
           >
-            <option value="">Not stated</option>
-            {CURRENCIES.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.label}
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+              <option key={n} value={n}>
+                {n}
               </option>
             ))}
           </select>
@@ -165,8 +164,8 @@ export function FindFields({ values }: { values: FindFieldValues }) {
           <span className="text-sm">
             <span className="font-semibold">Crew discount</span>
             <span className="block text-xs text-secondary">
-              Discount available on production of ID. Recorded only; not yet
-              shown on the public site.
+              Discount available on production of ID. Shown on the entry as
+              included in the price.
             </span>
           </span>
         </label>

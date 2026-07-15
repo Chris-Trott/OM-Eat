@@ -18,7 +18,6 @@ const FIND_FIELDS = [
   "airside",
   "walking_time",
   "cost_amount",
-  "cost_currency",
   "payment",
   "opening_hours",
   "directions",
@@ -43,11 +42,23 @@ function mapPayloadToFind(payload: Payload): Record<string, unknown> {
     row[field] = payload[field] ?? null;
   }
 
+  // Price is stored in the payload as a string (JSON survives curator edits
+  // losslessly that way); it becomes numeric here, at publication.
+  const cost = Number(String(payload.cost_amount ?? "").replace(",", "."));
+  row.cost_amount =
+    payload.cost_amount != null &&
+    payload.cost_amount !== "" &&
+    Number.isFinite(cost)
+      ? cost
+      : null;
+
+  const qty = Number(payload.cost_qty);
+  row.cost_qty = Number.isInteger(qty) && qty >= 1 && qty <= 99 ? qty : 1;
+
   // Database check constraint: maps_url is landside only.
   if (row.airside === true) row.maps_url = null;
 
-  // Curator-only flag, not yet shown publicly. Checkbox semantics: absent
-  // or anything but true means false.
+  // Checkbox semantics: absent or anything but true means false.
   row.crew_discount = payload.crew_discount === true;
 
   return row;

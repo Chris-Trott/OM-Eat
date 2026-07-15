@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { CURRENCIES } from "@/lib/currencies";
 import { PhotoInput } from "@/app/add/photo-input";
 
 const inputClass =
@@ -64,7 +63,13 @@ export function UpdateForm({ findId }: { findId: string }) {
                 : null,
           walking_time: value("walking_time"),
           cost_amount: value("cost_amount"),
-          cost_currency: value("cost_currency"),
+          cost_qty: value("cost_qty"),
+          crew_discount:
+            value("crew_discount") === "yes"
+              ? true
+              : value("crew_discount") === "no"
+                ? false
+                : null,
           payment: value("payment"),
           opening_hours: value("opening_hours"),
           directions: value("directions"),
@@ -173,34 +178,51 @@ export function UpdateForm({ findId }: { findId: string }) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className={labelClass} htmlFor="cost_amount">
-                Cost
+                Price
               </label>
               <input
                 id="cost_amount"
                 name="cost_amount"
-                maxLength={100}
-                placeholder="4.50, or 11.50 for 6"
+                inputMode="decimal"
+                maxLength={12}
+                placeholder="4.50"
                 className={inputClass}
               />
             </div>
             <div>
-              <label className={labelClass} htmlFor="cost_currency">
-                Currency
+              <label className={labelClass} htmlFor="cost_qty">
+                For how many
               </label>
               <select
-                id="cost_currency"
-                name="cost_currency"
+                id="cost_qty"
+                name="cost_qty"
                 defaultValue=""
                 className={inputClass}
               >
                 <option value="">No change</option>
-                {CURRENCIES.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.label}
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {n}
                   </option>
                 ))}
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className={labelClass} htmlFor="crew_discount">
+              Crew discount
+            </label>
+            <select
+              id="crew_discount"
+              name="crew_discount"
+              defaultValue=""
+              className={inputClass}
+            >
+              <option value="">No change</option>
+              <option value="yes">Available, on production of ID</option>
+              <option value="no">Not available</option>
+            </select>
           </div>
 
           <div>

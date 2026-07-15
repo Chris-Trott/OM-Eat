@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { CURRENCIES } from "@/lib/currencies";
 import { PhotoInput } from "./photo-input";
 
 type Destination = {
@@ -74,7 +73,8 @@ export function SubmissionForm({
           airside,
           walking_time: value("walking_time"),
           cost_amount: value("cost_amount"),
-          cost_currency: value("cost_currency"),
+          cost_qty: value("cost_qty"),
+          crew_discount: form.get("crew_discount") === "on",
           payment: value("payment"),
           opening_hours: value("opening_hours"),
           directions: value("directions"),
@@ -202,35 +202,45 @@ export function SubmissionForm({
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelClass} htmlFor="cost_amount">
-            Cost
+            Price
           </label>
           <input
             id="cost_amount"
             name="cost_amount"
-            maxLength={100}
-            placeholder="4.50, or 11.50 for 6"
+            inputMode="decimal"
+            maxLength={12}
+            placeholder="4.50"
             className={inputClass}
           />
         </div>
         <div>
-          <label className={labelClass} htmlFor="cost_currency">
-            Currency
+          <label className={labelClass} htmlFor="cost_qty">
+            For how many
           </label>
-          <select
-            id="cost_currency"
-            name="cost_currency"
-            defaultValue=""
-            className={inputClass}
-          >
-            <option value="">Not stated</option>
-            {CURRENCIES.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.label}
+          <select id="cost_qty" name="cost_qty" defaultValue="1" className={inputClass}>
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+              <option key={n} value={n}>
+                {n}
               </option>
             ))}
           </select>
         </div>
       </div>
+      <p className="text-xs text-secondary">
+        Local currency is assumed from the destination. Leave the count at 1
+        if the price is for one.
+      </p>
+
+      <label className="flex items-start gap-3">
+        <input type="checkbox" name="crew_discount" className="mt-1 h-4 w-4" />
+        <span className="text-sm">
+          <span className="font-semibold">Crew discount</span>
+          <span className="block text-xs text-secondary">
+            Tick if the price above is the discounted price, on production of
+            ID.
+          </span>
+        </span>
+      </label>
 
       <div>
         <label className={labelClass} htmlFor="payment">

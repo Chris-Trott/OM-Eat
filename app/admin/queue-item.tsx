@@ -24,18 +24,21 @@ const DIFF_FIELDS: [string, string][] = [
   ["place", "Name of vendor / area of terminal"],
   ["airside", "Airside/landside"],
   ["walking_time", "Walking time"],
-  ["cost_amount", "Cost"],
-  ["cost_currency", "Currency"],
+  ["cost_amount", "Price"],
+  ["cost_qty", "For how many"],
+  ["crew_discount", "Crew discount"],
   ["payment", "Payment"],
   ["opening_hours", "Opening hours"],
   ["directions", "Directions"],
   ["maps_url", "Map link"],
 ];
 
-function display(value: unknown): string {
+function display(value: unknown, key?: string): string {
   if (value == null || value === "") return "—";
-  if (value === true) return "Airside";
-  if (value === false) return "Landside";
+  if (typeof value === "boolean") {
+    if (key === "crew_discount") return value ? "Available" : "Not available";
+    return value ? "Airside" : "Landside";
+  }
   return String(value);
 }
 
@@ -233,7 +236,7 @@ function UpdateReview({
   const changes = DIFF_FIELDS.filter(([key]) => {
     const proposed = payload[key];
     if (proposed == null || proposed === "") return false;
-    return display(proposed) !== display(currentFind[key]);
+    return display(proposed, key) !== display(currentFind[key], key);
   });
 
   const imagePaths = Array.isArray(payload.image_paths)
@@ -307,9 +310,9 @@ function UpdateReview({
                   <span className="text-sm">
                     <span className="font-semibold">{label}</span>
                     <span className="block text-secondary line-through">
-                      {display(currentFind[key])}
+                      {display(currentFind[key], key)}
                     </span>
-                    <span className="block">{display(payload[key])}</span>
+                    <span className="block">{display(payload[key], key)}</span>
                   </span>
                 </label>
               </li>

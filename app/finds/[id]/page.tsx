@@ -4,6 +4,7 @@ import { createPublicClient } from "@/lib/supabase/public";
 import { AirsideBadge } from "@/app/finds/airside-badge";
 import { ConfirmControl } from "@/app/finds/confirm-control";
 import { findImageUrl } from "@/lib/images";
+import { formatCost } from "@/lib/currencies";
 
 export const revalidate = 60;
 
@@ -18,7 +19,7 @@ export default async function FindPage({
   const { data: find } = await supabase
     .from("finds")
     .select(
-      "id, dish, place, airside, walking_time, cost_amount, cost_currency, payment, opening_hours, directions, maps_url, submitter_display, confirm_count, last_confirmed_at, destinations ( iata, city, country, slug )",
+      "id, dish, place, airside, walking_time, cost_amount, cost_qty, crew_discount, payment, opening_hours, directions, maps_url, submitter_display, confirm_count, last_confirmed_at, destinations ( iata, city, country, slug )",
     )
     .eq("id", id)
     .eq("status", "published")
@@ -47,12 +48,16 @@ export default async function FindPage({
 
   const cost =
     find.cost_amount != null
-      ? `${find.cost_amount} ${find.cost_currency ?? ""}`.trim()
+      ? formatCost(find.cost_amount, find.cost_qty, destination?.country)
       : null;
 
   const facts: [string, string | null][] = [
     ["Walking time", find.walking_time],
     ["Cost", cost],
+    [
+      "Crew discount",
+      find.crew_discount ? "Included in price shown. ID required." : null,
+    ],
     ["Payment", paymentLabel],
     ["Opening hours", find.opening_hours],
   ];

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { rateLimit } from "@/lib/rate-limit";
-import { CURRENCY_CODES } from "@/lib/currencies";
 import { FIND_IMAGES_BUCKET } from "@/lib/images";
 
 // Public submission intake for new Finds and corrections. Open but
@@ -56,11 +55,20 @@ export async function POST(request: Request) {
   const airside =
     body.airside === true ? true : body.airside === false ? false : null;
 
-  const costAmount = text(body.cost_amount, 100);
+  const costAmount = text(body.cost_amount, 12);
+  if (costAmount !== null && !/^\d+([.,]\d{1,2})?$/.test(costAmount)) {
+    return invalid("Price must be a number.");
+  }
 
-  const costCurrency = text(body.cost_currency, 3)?.toUpperCase() ?? null;
-  if (costCurrency !== null && !CURRENCY_CODES.includes(costCurrency)) {
-    return invalid("Currency must be picked from the list.");
+  const costQty =
+    body.cost_qty == null || body.cost_qty === ""
+      ? null
+      : Number(body.cost_qty);
+  if (
+    costQty !== null &&
+    (!Number.isInteger(costQty) || costQty < 1 || costQty > 99)
+  ) {
+    return invalid("Quantity must be picked from the list.");
   }
 
   const payment = text(body.payment, 10);
@@ -81,8 +89,16 @@ export async function POST(request: Request) {
     place,
     airside,
     walking_time: text(body.walking_time, 100),
-    cost_amount: costAmount,
-    cost_currency: costCurrency,
+    cost_amount: costAmount ? costAmount.replace(",", ".") : null,
+    cost_qty: costQty,
+    // Tri-state: true/false from a stated answer, null means not stated
+    // (a correction that leaves it alone).
+    crew_discount:
+      body.crew_discount === true
+        ? true
+        : body.crew_discount === false
+          ? false
+          : null,
     payment,
     opening_hours: text(body.opening_hours, 200),
     directions: text(body.directions, 2000),
