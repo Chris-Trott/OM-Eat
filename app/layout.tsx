@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
@@ -19,7 +19,19 @@ export const metadata: Metadata = {
   title: "OM-Eat",
   description:
     "Reference guide to what to eat on a turnaround, maintained by BA Euroflyer crew at London Gatwick.",
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16.png", type: "image/png", sizes: "16x16" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
+
+export const viewport: Viewport = { themeColor: "#1E5F6B" };
 
 // Follow the device theme before first paint; tokens live under
 // [data-theme="dark"] in globals.css.
